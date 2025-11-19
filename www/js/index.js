@@ -146,6 +146,16 @@ function listSites(categoryId) {
                     deleteSite(site.id, categoryId)
                 })
 
+                const btnOpen = row.querySelector(".btn-open")
+                btnOpen.addEventListener("click", () => {
+                    window.open(site.url, '_blank')
+                })
+
+                const btnEdit = row.querySelector(".btn-edit")
+                btnEdit.addEventListener("click", (catId, siteId) => {
+                    window.location.href = `detail.html?catId=${categoryId}&siteId=${site.id}`;
+                })
+
                 table.appendChild(row)
             })
         })
