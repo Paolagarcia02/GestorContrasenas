@@ -11,6 +11,7 @@ const inputUrl = document.getElementById("url")
 const inputUser = document.getElementById("user")
 const inputPassword = document.getElementById("password")
 const description = document.getElementById("description")
+const btnAleatory = document.getElementById("btn-aleatory")
 
 if (btnCancel){
 btnCancel.addEventListener("click", () => {
@@ -62,3 +63,36 @@ btnSave.addEventListener("click", () => {
         });
 
 })
+
+function generateAleatoryPassword(length = 8) {
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+    let password = "";
+
+    for(let i = 0; i< length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+    return password;
+}
+
+if(btnAleatory){
+    btnAleatory.addEventListener("click", () => {
+        const newPassword = generateAleatoryPassword(8)
+        inputPassword.value = newPassword
+    })
+}
+
+function emptyFields(input){
+    if(input.value.trim() === ""){
+      input.classList.add("is-invalid")
+      input.classList.remove("is-valid")  
+    } else {
+        input.classList.remove("is-invalid")    
+        input.classList.add("is-valid")
+    }
+}
+
+
+inputUrl.addEventListener("blur", () => emptyFields(inputUrl));
+inputUser.addEventListener("blur", () => emptyFields(inputUser));
+inputPassword.addEventListener("blur", () => emptyFields(inputPassword));

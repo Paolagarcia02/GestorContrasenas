@@ -1,6 +1,9 @@
 
 const btnSave = document.getElementById("btn-save-category")
 const inputCat = document.getElementById("cat-name")
+const searchInput = document.getElementById("search-input")
+let allCategories = []
+let currentSites = []
 
 
 function listCategories() {
@@ -13,41 +16,9 @@ function listCategories() {
                 throw new Error("Server Error")
             }
         })
-
         .then(data => {
-            console.log(data)
-            const list = document.getElementById("category-list")
-            list.innerHTML = ""
-
-            data.forEach(category => {
-                const li = document.createElement("li")
-                li.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                li.dataset.id = category.id
-                const span = document.createElement('span')
-                span.textContent = category.name
-                const btnDelete = document.createElement('button')
-                btnDelete.className = "btn btn-sm btn-delete"
-                btnDelete.textContent = "❌"
-
-                btnDelete.addEventListener("click", (event) => {
-                    event.stopPropagation()
-                    deleteCategory(category.id)
-                })
-
-                li.addEventListener("click", () => {
-                    document.querySelectorAll(".list-group-item").forEach(i => i.classList.remove("active"))
-                    li.classList.add("active")
-                    listSites(category.id)
-
-                    const btnAdd = document.getElementById("btn-add-site")
-                    btnAdd.href = `detail.html?catId=${category.id}`
-                })
-
-                li.appendChild(span)
-                li.appendChild(btnDelete)
-
-                list.appendChild(li)
-            })
+            allCategories = data
+            renderCategories(allCategories)
         })
 
         .catch(error => {
@@ -124,30 +95,8 @@ function listSites(categoryId) {
         })
 
         .then(data => {
-            console.log(data)
-            const table = document.getElementById("site-list")
-            table.innerHTML = ""
-            data.sites.forEach(site => {
-                const row = document.createElement("tr")
-                row.innerHTML = `
-                    <td>${site.name}</td>
-                    <td>${site.user}</td>
-                    <td>${site.createdAt}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary btn-open">📂</button>
-                        <button class="btn btn-sm btn-outline-danger btn-delete">❌</button>
-                        <button class="btn btn-sm btn-outline-warning btn-edit">✏️</button>
-                    </td>
-                    `;
-
-
-                const btnDelete = row.querySelector(".btn-delete")
-                btnDelete.addEventListener("click", () =>{
-                    deleteSite(site.id, categoryId)
-                })
-
-                table.appendChild(row)
-            })
+            currentSites = data.sites
+            renderSites(currentSites)
         })
 
         .catch(error => {
@@ -164,15 +113,94 @@ function deleteSite(siteId, categoryId) {
         method: "DELETE"
     })
 
-    .then(response => {
+        .then(response => {
             if (response.ok) {
                 listSites(categoryId)
             } else {
                 throw new Error("Error to delete")
             }
         })
-    .catch(error => {
+        .catch(error => {
             console.error("Error:", error);
             alert("Couldn't be deleted the site");
         });
 }
+
+function renderCategories(list) {
+    const container = document.getElementById("category-list")
+    container.innerHTML = ""
+    list.forEach(category => {
+        const li = document.createElement("li")
+        li.className = "list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+        li.dataset.id = category.id
+        const span = document.createElement('span')
+        span.textContent = category.name
+        const btnDelete = document.createElement('button')
+        btnDelete.className = "btn btn-sm btn-delete"
+        btnDelete.textContent = "❌"
+
+        btnDelete.addEventListener("click", (event) => {
+            event.stopPropagation()
+            deleteCategory(category.id)
+        })
+
+        li.addEventListener("click", () => {
+            document.querySelectorAll(".list-group-item").forEach(i => i.classList.remove("active"))
+            li.classList.add("active")
+            listSites(category.id)
+
+            const btnAdd = document.getElementById("btn-add-site")
+            btnAdd.href = `detail.html?catId=${category.id}`
+        })
+
+        li.appendChild(span)
+        li.appendChild(btnDelete)
+
+        container.appendChild(li)
+    })
+
+
+}
+
+function renderSites(list) {
+    const table = document.getElementById("site-list")
+    table.innerHTML = ""
+    list.forEach(site => {
+        const row = document.createElement("tr")
+        row.innerHTML = `
+                    <td>${site.name}</td>
+                    <td>${site.user}</td>
+                    <td>${site.createdAt}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary btn-open">📂</button>
+                        <button class="btn btn-sm btn-outline-danger btn-delete">❌</button>
+                        <button class="btn btn-sm btn-outline-warning btn-edit">✏️</button>
+                    </td>
+                    `;
+
+
+        const btnDelete = row.querySelector(".btn-delete")
+        btnDelete.addEventListener("click", () => {
+            deleteSite(site.id, categoryId)
+        })
+
+        table.appendChild(row)
+    })
+}
+
+function filterAll() {
+    const searchText = searchInput.value.toLowerCase()
+    const filteredCategories = allCategories.filter(category =>
+        category.name.toLowerCase().includes(searchText)
+    )
+    renderCategories(filteredCategories)
+
+    const filteredSites = currentSites.filter(site =>
+        site.name.toLowerCase().includes(searchText) ||
+        site.user.toLowerCase().includes(searchText)
+    )
+    renderSites(filteredSites)
+}
+searchInput.addEventListener("input", filterAll)
+
+
