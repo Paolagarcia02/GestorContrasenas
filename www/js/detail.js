@@ -1,4 +1,5 @@
 const params = new URLSearchParams(window.location.search)
+const siteId = params.get("siteId")
 const categoryId = params.get("catId")
 if (!categoryId) {
     alert("Error");
@@ -11,7 +12,6 @@ const inputUrl = document.getElementById("url")
 const inputUser = document.getElementById("user")
 const inputPassword = document.getElementById("password")
 const description = document.getElementById("description")
-const btnAleatory = document.getElementById("btn-aleatory")
 
 if (btnCancel){
 btnCancel.addEventListener("click", () => {
@@ -96,3 +96,10 @@ function emptyFields(input){
 inputUrl.addEventListener("blur", () => emptyFields(inputUrl));
 inputUser.addEventListener("blur", () => emptyFields(inputUser));
 inputPassword.addEventListener("blur", () => emptyFields(inputPassword));
+
+if(siteId){
+    fetch("http://localhost:3000/sites/:siteId",{
+      method: "GET"  
+    })
+    
+}

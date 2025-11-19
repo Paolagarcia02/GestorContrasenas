@@ -95,45 +95,8 @@ function listSites(categoryId) {
         })
 
         .then(data => {
-<<<<<<< HEAD
-            console.log(data)
-            const table = document.getElementById("site-list")
-            table.innerHTML = ""
-            data.sites.forEach(site => {
-                const row = document.createElement("tr")
-                row.innerHTML = `
-                    <td>${site.name}</td>
-                    <td>${site.user}</td>
-                    <td>${site.createdAt}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary btn-open">📂</button>
-                        <button class="btn btn-sm btn-outline-danger btn-delete">❌</button>
-                        <button class="btn btn-sm btn-outline-warning btn-edit">✏️</button>
-                    </td>
-                    `;
-
-
-                const btnDelete = row.querySelector(".btn-delete")
-                btnDelete.addEventListener("click", () =>{
-                    deleteSite(site.id, categoryId)
-                })
-
-                const btnOpen = row.querySelector(".btn-open")
-                btnOpen.addEventListener("click", () => {
-                    window.open(site.url, '_blank')
-                })
-
-                const btnEdit = row.querySelector(".btn-edit")
-                btnEdit.addEventListener("click", (catId, siteId) => {
-                    window.location.href = `detail.html?catId=${categoryId}&siteId=${site.id}`;
-                })
-
-                table.appendChild(row)
-            })
-=======
             currentSites = data.sites
             renderSites(currentSites)
->>>>>>> 7e969bc49c012215abf9b487ef0d30e556eb3384
         })
 
         .catch(error => {
